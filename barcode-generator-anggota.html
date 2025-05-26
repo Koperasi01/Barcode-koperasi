@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Barcode Generator Anggota Koperasi</title>
+  <script src="https://cdn.jsdelivr.net/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+</head>
+<body>
+  <h2>Generator Barcode Anggota Koperasi</h2>
+  <label for="memberId">Masukkan ID/Nama/NIK Anggota:</label><br>
+  <input type="text" id="memberId" placeholder="Misal: 202501001" />
+  <button onclick="generateBarcode()">Buat Barcode</button>
+
+  <div style="margin-top: 20px;">
+    <svg id="barcode"></svg>
+  </div>
+
+  <script>
+    function generateBarcode() {
+      var value = document.getElementById("memberId").value;
+      if (value.trim() === "") {
+        alert("Silakan isi data anggota terlebih dahulu.");
+        return;
+      }
+      JsBarcode("#barcode", value, {
+        format: "CODE128",
+        lineColor: "#000",
+        width: 2,
+        height: 50,
+        displayValue: true
+      });
+    }
+  </script>
+</body>
+</html>
