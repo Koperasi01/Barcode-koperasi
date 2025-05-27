@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Input Data Anggota</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,9 +20,9 @@
       padding: 6px;
       margin-top: 4px;
     }
-    #qrcode {
+    #barcode {
       margin-top: 20px;
-      text-align: center;
+      display: block;
     }
     .output {
       margin-top: 20px;
@@ -37,7 +37,7 @@
     <label>Nama Lengkap:
       <input type="text" id="nama" required>
     </label>
-    <label>No. Anggota:
+    <label>No Anggota:
       <input type="text" id="nik" required>
     </label>
     <label>No. HP:
@@ -49,11 +49,11 @@
     <button type="submit">Tampilkan</button>
   </form>
 
-  <div id="qrcode"></div>
+  <svg id="barcode"></svg>
 
   <div class="output" id="outputData" style="display:none;">
     <p><strong>Nama:</strong> <span id="outNama"></span></p>
-    <p><strong>No. Anggota:</strong> <span id="outNik"></span></p>
+    <p><strong>No Anggota:</strong> <span id="outNik"></span></p>
     <p><strong>No. HP:</strong> <span id="outHp"></span></p>
     <p><strong>Alamat:</strong> <span id="outAlamat"></span></p>
   </div>
@@ -67,21 +67,37 @@
       const hp = document.getElementById("hp").value;
       const alamat = document.getElementById("alamat").value;
 
+      // Tampilkan barcode dan data
+      JsBarcode("#barcode", nik, {
+        format: "CODE128",
+        lineColor: "#000",
+        width: 2,
+        height: 60,
+        displayValue: true
+      });
+
       document.getElementById("outNama").textContent = nama;
       document.getElementById("outNik").textContent = nik;
       document.getElementById("outHp").textContent = hp;
       document.getElementById("outAlamat").textContent = alamat;
       document.getElementById("outputData").style.display = "block";
 
-      // Hapus QR code sebelumnya
-      document.getElementById("qrcode").innerHTML = "";
-
-      // Tampilkan semua data dalam QR Code
-      const qrText = `Nama: ${nama}\nNo. Anggota: ${nik}\nNo. HP: ${hp}\nAlamat: ${alamat}`;
-      new QRCode(document.getElementById("qrcode"), {
-        text: qrText,
-        width: 200,
-        height: 200
+      // Kirim data ke Google Sheets
+      fetch("https://script.google.com/macros/s/AKfycbz8wZ_dN1qJUvnJ5ZfpeVZa0zvujnQkruWjauEGq2U40oBi8Ycmxl_D6-8yO3qn8d_m/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          nama: nama,
+          nik: nik,
+          hp: hp,
+          alamat: alamat
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.text()).then(data => {
+        console.log("Berhasil kirim:", data);
+      }).catch(err => {
+        console.error("Gagal kirim:", err);
       });
     });
   </script>
