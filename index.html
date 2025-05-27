@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <title>Input Data Anggota</title>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -21,9 +20,9 @@
       padding: 6px;
       margin-top: 4px;
     }
-    #barcode {
+    #qrcode {
       margin-top: 20px;
-      display: block;
+      text-align: center;
     }
     .output {
       margin-top: 20px;
@@ -50,7 +49,7 @@
     <button type="submit">Tampilkan</button>
   </form>
 
-  <svg id="barcode"></svg>
+  <div id="qrcode"></div>
 
   <div class="output" id="outputData" style="display:none;">
     <p><strong>Nama:</strong> <span id="outNama"></span></p>
@@ -74,15 +73,16 @@
       document.getElementById("outAlamat").textContent = alamat;
       document.getElementById("outputData").style.display = "block";
 
-      JsBarcode("#barcode", nik, {
-        format: "CODE128",
-        lineColor: "#000",
-        width: 2,
-        height: 60,
-        displayValue: true
+      // Hapus QR code sebelumnya (jika ada)
+      document.getElementById("qrcode").innerHTML = "";
+
+      // Buat QR code baru
+      new QRCode(document.getElementById("qrcode"), {
+        text: nik,
+        width: 200,
+        height: 200
       });
     });
   </script>
 </body>
 </html>
-<!-- rebuild -->
