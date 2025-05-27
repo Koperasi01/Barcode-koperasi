@@ -37,7 +37,7 @@
     <label>Nama Lengkap:
       <input type="text" id="nama" required>
     </label>
-    <label> No. Anggota:
+    <label>No. Anggota:
       <input type="text" id="nik" required>
     </label>
     <label>No. HP:
@@ -73,12 +73,13 @@
       document.getElementById("outAlamat").textContent = alamat;
       document.getElementById("outputData").style.display = "block";
 
-      // Hapus QR code sebelumnya (jika ada)
+      // Hapus QR code sebelumnya
       document.getElementById("qrcode").innerHTML = "";
 
-      // Buat QR code baru
+      // Tampilkan semua data dalam QR Code
+      const qrText = `Nama: ${nama}\nNo. Anggota: ${nik}\nNo. HP: ${hp}\nAlamat: ${alamat}`;
       new QRCode(document.getElementById("qrcode"), {
-        text: `Nama: ${nama}\nNo. Anggota: ${nik}\nHP: ${hp}\nAlamat: ${alamat}`
+        text: qrText,
         width: 200,
         height: 200
       });
