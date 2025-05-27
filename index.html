@@ -37,7 +37,7 @@
     <label>Nama Lengkap:
       <input type="text" id="nama" required>
     </label>
-    <label>NIK / Nomor Anggota:
+    <label> No. Anggota:
       <input type="text" id="nik" required>
     </label>
     <label>No. HP:
@@ -53,7 +53,7 @@
 
   <div class="output" id="outputData" style="display:none;">
     <p><strong>Nama:</strong> <span id="outNama"></span></p>
-    <p><strong>NIK:</strong> <span id="outNik"></span></p>
+    <p><strong>No. Anggota:</strong> <span id="outNik"></span></p>
     <p><strong>No. HP:</strong> <span id="outHp"></span></p>
     <p><strong>Alamat:</strong> <span id="outAlamat"></span></p>
   </div>
@@ -78,7 +78,7 @@
 
       // Buat QR code baru
       new QRCode(document.getElementById("qrcode"), {
-        text: nik,
+        text: `Nama: ${nama}\nNo. Anggota: ${nik}\nHP: ${hp}\nAlamat: ${alamat}`
         width: 200,
         height: 200
       });
