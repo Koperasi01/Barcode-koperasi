@@ -1,87 +1,79 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Input Data Anggota</title>
-  <script src="https://cdn.jsdelivr.net/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+  <title>Form Input Anggota Koperasi</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.0/build/qrcode.min.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      padding: 20px;
-      max-width: 500px;
-      margin: auto;
+      margin: 40px;
     }
-    label {
-      display: block;
-      margin-top: 10px;
+    input, button {
+      margin: 8px 0;
+      padding: 8px;
+      width: 300px;
     }
-    input, textarea {
-      width: 100%;
-      padding: 6px;
-      margin-top: 4px;
-    }
-    #barcode {
-      margin-top: 20px;
-      display: block;
-    }
-    .output {
-      margin-top: 20px;
-      border-top: 1px solid #ccc;
-      padding-top: 10px;
+    canvas {
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
+
   <h2>Form Input Anggota</h2>
-  <form id="anggotaForm">
-    <label>Nama Lengkap:
-      <input type="text" id="nama" required>
-    </label>
-    <label>NIK / Nomor Anggota:
-      <input type="text" id="nik" required>
-    </label>
-    <label>No. HP:
-      <input type="text" id="hp">
-    </label>
-    <label>Alamat:
-      <textarea id="alamat"></textarea>
-    </label>
-    <button type="submit">Tampilkan</button>
-  </form>
 
-  <svg id="barcode"></svg>
+  <input id="nama" placeholder="Nama" /><br>
+  <input id="noanggota" placeholder="No Anggota" /><br>
+  <input id="nohp" placeholder="No HP" /><br>
+  <input id="alamat" placeholder="Alamat" /><br>
 
-  <div class="output" id="outputData" style="display:none;">
-    <p><strong>Nama:</strong> <span id="outNama"></span></p>
-    <p><strong>NIK:</strong> <span id="outNik"></span></p>
-    <p><strong>No. HP:</strong> <span id="outHp"></span></p>
-    <p><strong>Alamat:</strong> <span id="outAlamat"></span></p>
-  </div>
+  <button onclick="generateQR()">Generate Barcode</button><br>
+  <canvas id="qrcode"></canvas><br>
+
+  <button onclick="kirimKeSheets()">Kirim ke Spreadsheet</button>
 
   <script>
-    document.getElementById("anggotaForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-
-      const nama = document.getElementById("nama").value;
-      const nik = document.getElementById("nik").value;
-      const hp = document.getElementById("hp").value;
-      const alamat = document.getElementById("alamat").value;
-
-      document.getElementById("outNama").textContent = nama;
-      document.getElementById("outNik").textContent = nik;
-      document.getElementById("outHp").textContent = hp;
-      document.getElementById("outAlamat").textContent = alamat;
-      document.getElementById("outputData").style.display = "block";
-
-      JsBarcode("#barcode", nik, {
-        format: "CODE128",
-        lineColor: "#000",
-        width: 2,
-        height: 60,
-        displayValue: true
+    function generateQR() {
+      const noanggota = document.getElementById('noanggota').value;
+      const canvas = document.getElementById('qrcode');
+      if (!noanggota) {
+        alert("Isi No Anggota dulu!");
+        return;
+      }
+      QRCode.toCanvas(canvas, noanggota, function (error) {
+        if (error) console.error(error);
+        else console.log('QR code generated!');
       });
-    });
+    }
+
+    function kirimKeSheets() {
+      const canvas = document.getElementById('qrcode');
+      const qrImage = canvas.toDataURL();
+
+      const data = {
+        nama: document.getElementById('nama').value,
+        noanggota: document.getElementById('noanggota').value,
+        nohp: document.getElementById('nohp').value,
+        alamat: document.getElementById('alamat').value,
+        qrimage: qrImage
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbwRcuQq-yGyqqf4G_YuL8fHaXOBoSU-0tTpgkg9JAE3D-0hUDvm57MSkeS-ynJhJaTLdA/exec", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.text())
+        .then(txt => {
+          alert(" Data berhasil dikirim ke Google Spreadsheet!");
+          console.log(txt);
+        }).catch(err => {
+          alert(" Gagal mengirim data.");
+          console.error(err);
+        });
+    }
   </script>
+
 </body>
 </html>
